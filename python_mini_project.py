@@ -77,6 +77,7 @@ class SnakeGamePanel(wx.Panel):
         super().__init__(parent, style=wx.WANTS_CHARS)
         self.frame = frame
         self.config = config
+        self.default_speed = config.base_speed_ms
         self.highscores = highscores
 
         self.SetBackgroundStyle(wx.BG_STYLE_PAINT)
@@ -106,7 +107,8 @@ class SnakeGamePanel(wx.Panel):
         self.direction = Direction.RIGHT
         self.next_direction = self.direction
         self.score = 0
-        self.timer.Start(self.config.base_speed_ms)
+        self.config.base_speed_ms = self.default_speed
+        self.timer.Start(self.default_speed)
 
         head = (self.config.cols // 2, self.config.rows // 2)
         self.snake = [head, (head[0] - 1, head[1]), (head[0] - 2, head[1])]
@@ -211,7 +213,7 @@ class SnakeGamePanel(wx.Panel):
             self.frame.update_scores(self.score, self.highscores.score)
 
             if self.score % 30 == 0:
-                new_speed = max(40, self.config.base_speed_ms - 10)
+                new_speed = max(60, self.config.base_speed_ms - 10)
                 self.config.base_speed_ms = new_speed
                 self.timer.Start(new_speed)
         else:
@@ -461,7 +463,7 @@ class SnakeMenu(wx.Frame):
         self.game_frame = SnakeFrame(menu=self)
 
         if diff == "Easy":
-            self.game_frame.game_panel.config.base_speed_ms = 250
+            self.game_frame.game_panel.config.base_speed_ms = 220
         elif diff == "Normal":
             self.game_frame.game_panel.config.base_speed_ms = 180
         else:
@@ -477,10 +479,6 @@ class SnakeMenu(wx.Frame):
         self.Show()
         self.Raise()
 
-
-# =========================
-# Entry Point
-# =========================
 if __name__ == "__main__":
     app = wx.App(False)
     SnakeMenu()
